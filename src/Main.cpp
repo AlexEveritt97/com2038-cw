@@ -19,7 +19,7 @@ int main() {
 
 	FileReader* read = new FileReader();
 	try{
-		read -> fileReader("inventory.csv");
+		read -> fileReader("bin/inventory.csv");
 	}
 	catch(const invalid_argument& e){
 		cout << e.what() << endl;

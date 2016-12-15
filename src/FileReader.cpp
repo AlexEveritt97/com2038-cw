@@ -45,12 +45,18 @@ void FileReader::paternalTree()
 			Dog *dog = &inventory[i];
 			inInventory = true;
 			cout << inputName + " <-- " << traverseTree(dog, "") + "\n" << endl;
-		}
-		
+		}	
+	}
+
+	// input string to exit the program and clear the memory using "EXIT"
+	if(inputName ==  "EXIT") {
+		vector<Breed>().swap(inventory);
+		exit(1);
 	}
 
 	if(!inInventory) {
 		cout << inputName + " was not found in the inventory!" << endl;
+		cout << '\n';
 	}
 
 	paternalTree();
@@ -80,7 +86,7 @@ int FileReader::totalDogs(string filename)
 	if(file.fail()) {
 		// if file fails to open output an error and exit
 		cerr << "Error opening file: " << strerror(errno);
-		exit(1);
+		exit(0);
 	}
 
 	string line;
@@ -157,7 +163,7 @@ void FileReader::fileReader(string filename)
 						breed = token;
 					}
 					else{
-						throw invalid_argument(token+ " is not a valid breed name");
+						throw invalid_argument(token+ " is not a valid breed name - must be Husky, Corgi or Boxer");
 					}
 					break;
 				case 2:
