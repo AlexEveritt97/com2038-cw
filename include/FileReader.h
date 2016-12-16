@@ -17,4 +17,5 @@ class FileReader {
 
 	private:
 		vector<Breed> inventory;
+		bool first;
 };

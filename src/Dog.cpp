@@ -11,4 +11,3 @@ Dog::Dog(string n, string c){
 Dog::~Dog(){
 
 }
-

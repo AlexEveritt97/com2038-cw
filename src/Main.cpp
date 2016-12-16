@@ -7,21 +7,16 @@ using namespace std;
 
 int main() {
 
-	// Breed test("scooby doo", "brown", "husky");
-
-	// Breed *ptr1 = &test;
-
-	// Breed test1("scrappy doo", "green", "husky");
-	// test1.setDad(ptr1);
-
-	// cout << "Dad: " + test1.getDad() -> getName() << endl;
-	// cout << "Son: " + test1.getName() << endl;
-
+	// create a new file reader object
 	FileReader* read = new FileReader();
+
+	// error handling opening the file
 	try{
+		// try to read the csv file
 		read -> fileReader("bin/inventory.csv");
 	}
 	catch(const invalid_argument& e){
+		// catch the exception if the file name is not valid
 		cout << e.what() << endl;
 	}
 }
