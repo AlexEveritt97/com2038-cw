@@ -28,60 +28,6 @@ void FileReader::printHeaders(int total)
 	cout << "-----------------------------------------" << '\n';
 }
 
-// method for the user to input a dogs name and output the paternal tree onto the cmd line
-void FileReader::paternalTree()
-{
-	const int nameWidth = 9;
-
-	// print all the elements in the inventory vector to the table
-	if(first) {
-		for(unsigned int i = 0; i < inventory.size(); i++) {
-			printElement(inventory[i].getName(), nameWidth);
-			printElement(inventory[i].getBreedName(), nameWidth);
-			printElement(inventory[i].getColor(), nameWidth);
-			printElement(inventory[i].getDad() -> getName(), nameWidth);
-			printElement(inventory[i].getMom() -> getName(), nameWidth);
-			cout << '\n';
-		}
-		first = false;
-	}
-
-	cout << '\n';
-	string inputName;
-	cout << "Enter the dog's name to find its paternal tree: ";
-
-	// get the user input from the command line for the dogs name
-	getline(cin, inputName);
-
-	cout << '\n';
-
-	bool inInventory = false;
-
-	// loop through the inventory
-	for(unsigned int i = 0; i < inventory.size(); i++) {
-		if(inputName == inventory[i].getName()) {
-			// if the input name matches a dog in the inventory start traversing the parental tree
-			Dog *dog = &inventory[i];
-			inInventory = true;
-			cout << inputName + " <-- " << traverseTree(dog, "") << endl;
-		}	
-	}
-
-	// input string to exit the program and clear the memory using "EXIT"
-	if(inputName ==  "EXIT") {
-		// swaps inventory to empty array to clear memory
-		vector<Breed>().swap(inventory);
-		exit(1);
-	}
-
-	if(!inInventory) {
-		// if the dog is not in the inventory print the input name and the string
-		cout << inputName + " was not found in the inventory!" << endl;
-	}
-
-	// call the method recursively to allow the user to see more paternal trees
-	paternalTree();
-}
 
 // recursive algorithm to return the paternal tree string
 string FileReader::traverseTree(Dog *dog, string output) 
@@ -125,7 +71,7 @@ int FileReader::totalDogs(string filename)
 		total++;
 	}
 
-	return total;
+	return total-1;
 }
 
 // reading the csv file for the inventory input
@@ -150,12 +96,14 @@ void FileReader::fileReader(string filename)
 	string line;
 
 	int total = totalDogs(filename);
+	int totalCounter = 0;
 
 	// print the headers for the inventory table
 	printHeaders(total);
 
+	
 	// while the file is not at the end of the lines in the file
-	while(!file.eof()) {
+	while(true) {
 
 		// add the current line from the file to the string
 		file >> line;
@@ -164,6 +112,8 @@ void FileReader::fileReader(string filename)
 		istringstream ss(line);
 		string token;
 		int counter = 0;
+
+		totalCounter++;
 
 		// fields to build a breed object
 		string breed, name, colour, dadName, momName;
@@ -221,7 +171,7 @@ void FileReader::fileReader(string filename)
 
 				// find the parent object in the inventory
 				if(inventory[i].getName() == dadName) {
-					Breed *ptr1 = &inventory[i];
+					Breed* ptr1 = new Breed(inventory[i]);
 					// set the pointer to the parent object found
 					dog.setDad(ptr1);
 					// set the boolean variable as the parent was found
@@ -229,7 +179,7 @@ void FileReader::fileReader(string filename)
 				}
 
 				if(inventory[i].getName() == momName) {
-					Breed *ptr2 = &inventory[i];
+					Breed* ptr2 = new Breed(inventory[i]);
 					dog.setMom(ptr2);
 					hasMom = true;
 				}
@@ -254,8 +204,60 @@ void FileReader::fileReader(string filename)
 		// add the dog to the inventory vector
 		inventory.push_back(dog);
 
+		const int nameWidth = 9;
+
+		printElement(inventory[inventory.size()-1].getName(), nameWidth);
+		printElement(inventory[inventory.size()-1].getBreedName(), nameWidth);
+		printElement(inventory[inventory.size()-1].getColor(), nameWidth);
+		
+		Dog* dad = &inventory[inventory.size()-1];
+		Dog* mom = &inventory[inventory.size()-1];
+
+		printElement(dad -> getDad() -> getName(), nameWidth);
+		printElement(mom -> getMom() -> getName(), nameWidth);
+		cout << '\n';
+
+		
+		if(total == totalCounter) {
+			cout << '\n';
+			string inputName;
+			cout << "Enter the dog's name to find its paternal tree: ";
+
+			// get the user input from the command line for the dogs name
+			getline(cin, inputName);
+
+			cout << '\n';
+
+			bool inInventory = false;
+
+			// loop through the inventory
+			for(unsigned int i = 0; i < inventory.size(); i++) {
+				if(inputName == inventory[i].getName()) {
+					// if the input name matches a dog in the inventory start traversing the parental tree
+					Dog *dog = &inventory[i];
+					inInventory = true;
+					cout << inputName + " <-- " << traverseTree(dog, "") << endl;
+				}	
+			}
+
+			// input string to exit the program and clear the memory using "EXIT"
+			if(inputName ==  "EXIT") {
+				// swaps inventory to empty array to clear memory
+				vector<Breed>().swap(inventory);
+				exit(1);
+			}
+
+			if(!inInventory) {
+				// if the dog is not in the inventory print the input name and the string
+				cout << inputName + " was not found in the inventory!" << endl;
+			}
+			break;			
+
+		}
+		
+
 	}
 
 	// call the paternal tree method since the file has been successfully parsed
-	paternalTree();
+	//paternalTree();
 }
